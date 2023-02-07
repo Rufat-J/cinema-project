@@ -1,13 +1,16 @@
-import { useEffect, useState } from "react";
+import {useContext, useEffect, useState} from "react";
 import MovieList from "../components/MovieList";
-import { movieArray as allMovies } from "../components/movie-data.js";
 import MovieSearchField from "../components/MovieSearchField";
 import MovieFilterMenu from "../components/MovieFilterMenu.jsx";
+import GlobalContext from "../GlobalContext.jsx";
 
 export default function () {
   //handles the searching for movies
-  const [filteredMovies, setFilteredMovies] = useState(allMovies);
+  const {movies} = useContext(GlobalContext);
+  const [filteredMovies, setFilteredMovies] = useState([]);
   const [searchString, setSearchString] = useState(null);
+
+  useEffect(() => {setFilteredMovies(movies)}, [movies]);
 
   const addUserSearchString = (event) => {
     setSearchString(event.target.value);
@@ -16,7 +19,7 @@ export default function () {
   //handles the sorting of movies
   useEffect(() => {
     if (isValidSearch(searchString)) filterMoviesBySearch();
-    else setFilteredMovies(allMovies);
+    else setFilteredMovies(movies);
   }, [searchString]);
 
   return (
@@ -32,7 +35,7 @@ export default function () {
 
   function filterMoviesBySearch() {
     setFilteredMovies([
-      ...allMovies.filter((movie) =>
+      ...movies.filter((movie) =>
         compareTitleWithSearch(movie, searchString)
       ),
     ]);
